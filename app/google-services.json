@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1064028288708",
+    "firebase_url": "https://postify-2019.firebaseio.com",
+    "project_id": "postify-2019",
+    "storage_bucket": "postify-2019.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1064028288708:android:72da26168471d8d2",
+        "android_client_info": {
+          "package_name": "com.android.postify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1064028288708-siga4chnpju8glsf3diece0qar7bnaf8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-emmmVr0kOoWnFCj4-XYzXaWbiSWCBas"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1064028288708-siga4chnpju8glsf3diece0qar7bnaf8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
