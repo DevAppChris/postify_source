@@ -2,6 +2,7 @@ package com.android.postify;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -9,7 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class RegisterActivity extends AppCompatActivity {
-    TextView emojiTextView;
+    TextView emojiTextView, startWebBrowser;
     Button register_btn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +24,14 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(RegisterActivity.this, "Server-Status: offline ", Toast.LENGTH_SHORT).show();
+            }
+        });
+        startWebBrowser = findViewById(R.id.startWeb);
+        startWebBrowser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent web = new Intent(getApplicationContext(), BrowserActivity.class);
+                startActivity(web);
             }
         });
     }
