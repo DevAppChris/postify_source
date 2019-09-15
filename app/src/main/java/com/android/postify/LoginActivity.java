@@ -78,6 +78,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(LoginActivity.this, "Noch nicht verfügbar!" + getEmojiByUnicode(0x1F609), Toast.LENGTH_SHORT).show();
+                //Intent home = new Intent(getApplicationContext(), MainActivity.class);
+                //startActivity(home);
             }
         });
 

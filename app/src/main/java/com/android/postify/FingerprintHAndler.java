@@ -1,6 +1,7 @@
 package com.android.postify;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.Manifest;
@@ -68,6 +69,8 @@ public class FingerprintHAndler extends FingerprintManager.AuthenticationCallbac
             FingerprintManager.AuthenticationResult result) {
 
         Toast.makeText(context, "Success!", Toast.LENGTH_LONG).show();
+
+
     }
 
 }
