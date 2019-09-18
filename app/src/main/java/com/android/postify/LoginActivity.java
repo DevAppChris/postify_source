@@ -78,130 +78,15 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(LoginActivity.this, "Noch nicht verfügbar!" + getEmojiByUnicode(0x1F609), Toast.LENGTH_SHORT).show();
-                //Intent home = new Intent(getApplicationContext(), MainActivity.class);
-                //startActivity(home);
+                Intent home = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(home);
             }
         });
 
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            //Get an instance of KeyguardManager and FingerprintManager//
-            keyguardManager =
-                    (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
-            fingerprintManager =
-                    (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
-
-
-            //Check whether the device has a fingerprint sensor//
-
-            //Check whether the user has granted your app the USE_FINGERPRINT permission//
-
-
-            //Check that the user has registered at least one fingerprint//
-
-
-            //Check that the lockscreen is secured//
-            if (!keyguardManager.isKeyguardSecure()) {
-                // If the user hasn’t secured their lockscreen with a PIN password or pattern, then display the following text//
-            } else {
-                try {
-                    generateKey();
-                } catch (FingerprintException e) {
-                    e.printStackTrace();
-                }
-
-                if (initCipher()) {
-                    //If the cipher is initialized successfully, then create a CryptoObject instance//
-                    cryptoObject = new FingerprintManager.CryptoObject(cipher);
-
-                    // Here, I’m referencing the FingerprintHandler class that we’ll create in the next section. This class will be responsible
-                    // for starting the authentication process (via the startAuth method) and processing the authentication process events//
-                    FingerprintHAndler helper = new FingerprintHAndler(this);
-                    helper.startAuth(fingerprintManager, cryptoObject);
-                }
-            }
-
-        }
     }
     public String getEmojiByUnicode(int unicode){
         return new String(Character.toChars(unicode));
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private void generateKey() throws FingerprintException {
-        try {
-            // Obtain a reference to the Keystore using the standard Android keystore container identifier (“AndroidKeystore”)//
-            keyStore = KeyStore.getInstance("AndroidKeyStore");
 
-            //Generate the key//
-            keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
-
-            //Initialize an empty KeyStore//
-            keyStore.load(null);
-
-            //Initialize the KeyGenerator//
-            keyGenerator.init(new
-
-                    //Specify the operation(s) this key can be used for//
-                    KeyGenParameterSpec.Builder(KEY_NAME,
-                    KeyProperties.PURPOSE_ENCRYPT |
-                            KeyProperties.PURPOSE_DECRYPT)
-                    .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
-
-                    //Configure this key so that the user has to confirm their identity with a fingerprint each time they want to use it//
-                    .setUserAuthenticationRequired(true)
-                    .setEncryptionPaddings(
-                            KeyProperties.ENCRYPTION_PADDING_PKCS7)
-                    .build());
-
-            //Generate the key//
-            keyGenerator.generateKey();
-
-        } catch (KeyStoreException
-                | NoSuchAlgorithmException
-                | NoSuchProviderException
-                | InvalidAlgorithmParameterException
-                | CertificateException
-                | IOException exc) {
-            exc.printStackTrace();
-            throw new FingerprintException(exc);
-        }
-    }
-
-    //Create a new method that we’ll use to initialize our cipher//
-    public boolean initCipher() {
-        try {
-            //Obtain a cipher instance and configure it with the properties required for fingerprint authentication//
-            cipher = Cipher.getInstance(
-                    KeyProperties.KEY_ALGORITHM_AES + "/"
-                            + KeyProperties.BLOCK_MODE_CBC + "/"
-                            + KeyProperties.ENCRYPTION_PADDING_PKCS7);
-        } catch (NoSuchAlgorithmException |
-                NoSuchPaddingException e) {
-            throw new RuntimeException("Failed to get Cipher", e);
-        }
-
-        try {
-            keyStore.load(null);
-            SecretKey key = (SecretKey) keyStore.getKey(KEY_NAME,
-                    null);
-            cipher.init(Cipher.ENCRYPT_MODE, key);
-            //Return true if the cipher has been initialized successfully//
-            return true;
-        } catch (KeyPermanentlyInvalidatedException e) {
-
-            //Return false if cipher initialization failed//
-            return false;
-        } catch (KeyStoreException | CertificateException
-                | UnrecoverableKeyException | IOException
-                | NoSuchAlgorithmException | InvalidKeyException e) {
-            throw new RuntimeException("Failed to init Cipher", e);
-        }
-    }
-
-    private class FingerprintException extends Exception {
-        public FingerprintException(Exception e) {
-            super(e);
-        }
-    }
 }

@@ -9,4 +9,17 @@
     </style>
 
 
+    <style name="HomeTheme"  parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">#fff</item>
+        <item name="colorPrimaryDark">#A8A8A8</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColor">@color/actionbar_home_color</item>
+    </style>
+
+    <style name="TextAppearance.AppCompat.Widget.ActionBar.Title" parent="Theme.AppCompat.Light">
+        <item name="android:textColor">@color/actionbar_home_color</item>
+        <item name="android:textSize">20dp</item>
+        <item name="android:fontFamily">@font/prompt_medium_italic</item>
+    </style>
+
 </resources>
