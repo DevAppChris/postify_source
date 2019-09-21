@@ -5,7 +5,7 @@
     <color name="colorAccent">#D81B60</color>
     <color name="colorWhite">#FFF</color>
     <color name="colorGrey">#D3D3D3</color>
-    <color name="actionbar_home_color">#000</color>
+    <color name="actionbar_home_color">#696868</color>
 
     <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#D3D3D3</color>
 </resources>

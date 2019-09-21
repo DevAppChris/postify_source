@@ -19,7 +19,7 @@
     <style name="TextAppearance.AppCompat.Widget.ActionBar.Title" parent="Theme.AppCompat.Light">
         <item name="android:textColor">@color/actionbar_home_color</item>
         <item name="android:textSize">20dp</item>
-        <item name="android:fontFamily">@font/prompt_medium_italic</item>
+        <item name="android:fontFamily">@font/hind_vadodara_medium</item>
     </style>
 
 </resources>

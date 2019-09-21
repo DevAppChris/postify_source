@@ -22,9 +22,6 @@ public class MainActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("myPostify");
         actionBar.setLogo(R.drawable.logo_black);
-
-
-
         setContentView(R.layout.activity_main);
 
 

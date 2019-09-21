@@ -41,14 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     Button login_button;
     ImageView fingerprint_png;
 
-    private static final String KEY_NAME = "yourKey";
-    private Cipher cipher;
-    private KeyStore keyStore;
-    private KeyGenerator keyGenerator;
-    private TextView textView;
-    private FingerprintManager.CryptoObject cryptoObject;
-    private FingerprintManager fingerprintManager;
-    private KeyguardManager keyguardManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
         fingerprint_png.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(LoginActivity.this, "Lege deinen Finger auf deinen Scanner um dich einzuloggen", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "Lege deinen Finger auf deinen Scanner um dich einzuloggen/Disabled", Toast.LENGTH_SHORT).show();
             }
         });
         switch_to_regiser = findViewById(R.id.switch_to_register);
@@ -77,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
         login_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(LoginActivity.this, "Noch nicht verfügbar!" + getEmojiByUnicode(0x1F609), Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "Willkommen!" + getEmojiByUnicode(0x1F609), Toast.LENGTH_SHORT).show();
                 Intent home = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(home);
             }
