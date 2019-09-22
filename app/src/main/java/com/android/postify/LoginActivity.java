@@ -70,9 +70,9 @@ public class LoginActivity extends AppCompatActivity {
         login_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(LoginActivity.this, "Willkommen!" + getEmojiByUnicode(0x1F609), Toast.LENGTH_SHORT).show();
-                Intent home = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(home);
+                Toast.makeText(LoginActivity.this, "Geschlossen!" + getEmojiByUnicode(0x1F609), Toast.LENGTH_SHORT).show();
+                //Intent home = new Intent(getApplicationContext(), MainActivity.class);
+                //startActivity(home);
             }
         });
 
