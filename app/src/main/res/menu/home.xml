@@ -6,7 +6,12 @@
         android:orderInCategory="200"
         app:showAsAction="always"
         android:title="Kamera"
-        android:icon="@drawable/ic_camera_alt_black_24dp"/>
-   
+        android:icon="@drawable/ic_add_a_photo_black_24dp"/>
+   <item
+       android:id="@+id/open_profile"
+       android:orderInCategory="300"
+       app:showAsAction="always"
+       android:title="Profile"
+       android:icon="@drawable/ic_person_grey"/>
 
 </menu>

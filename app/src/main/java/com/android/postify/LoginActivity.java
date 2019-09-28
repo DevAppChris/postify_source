@@ -71,8 +71,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(LoginActivity.this, "Geschlossen!" + getEmojiByUnicode(0x1F609), Toast.LENGTH_SHORT).show();
-                //Intent home = new Intent(getApplicationContext(), MainActivity.class);
-                //startActivity(home);
+                Intent home = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(home);
+                finish();
             }
         });
         if(ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){

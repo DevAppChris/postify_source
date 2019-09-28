@@ -42,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
                 Intent camera = new Intent(this, CameraActivity.class);
                 startActivity(camera);
                 break;
+            case R.id.open_profile:
+                Intent profile = new Intent(this, ProfilActivity.class);
+                startActivity(profile);
+                break;
              default:
                  Toast.makeText(this, "Default", Toast.LENGTH_SHORT).show();
                  break;
