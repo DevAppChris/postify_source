@@ -45,7 +45,6 @@ public class LoginActivity extends AppCompatActivity {
     TextView emoji_view, switch_to_regiser;
     Button login_button;
     private int STORAGE_PERMISSION_CODE = 1;
-    private int GPS_PERMISSION_CODE = 2;
 
 
     @Override

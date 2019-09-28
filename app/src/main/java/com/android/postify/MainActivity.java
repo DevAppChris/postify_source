@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("myPostify");
+        actionBar.setTitle("Postify");
         actionBar.setLogo(R.drawable.logo_black);
         setContentView(R.layout.activity_main);
 
