@@ -10,12 +10,17 @@ import androidx.core.content.FileProvider;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -28,6 +33,7 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -39,12 +45,12 @@ import static android.os.Environment.getExternalStoragePublicDirectory;
 
 public class CameraActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 4;
-    private Bitmap bitmap;
-    private ImageView imageView;
+    Bitmap bitmap;
+    ImageView imageView;
     private int STORAGE_PERMISSION_CODE = 3;
-    private int CAMERA_PERMISSION_CODE = 2;
+    ContentValues cv;
+    Uri imageUri;
     FloatingActionButton floatingActionButton;
-    public String pathToFile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -75,7 +81,7 @@ public class CameraActivity extends AppCompatActivity {
                 onClick();
                 break;
             case R.id.start_camera_app:
-                startCameraPreview();
+                startCamera();
                 break;
             default:
                 Toast.makeText(this, "Default", Toast.LENGTH_SHORT).show();
@@ -84,63 +90,27 @@ public class CameraActivity extends AppCompatActivity {
         return true;
     }
 
-    private void startCameraPreview() {
-        if(ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
+    private void startCamera() {
+        if(ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(CameraActivity.this, new String[]{
+                    Manifest.permission.CAMERA
+            },
+                    100);
         }else {
-            requestCamera();
-        }
-        Intent takePic = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if(takePic.resolveActivity(getPackageManager())!= null){
-            File photoFile = null;
-            photoFile = createPhotoFile();
-            if(photoFile != null) {
-                 pathToFile = photoFile.getAbsolutePath();
-                Uri photoURI = FileProvider.getUriForFile(CameraActivity.this, "com.android.postify.fileprovider", photoFile);
-                takePic.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePic, 1);
-            }
 
+           openCameraView();
         }
-
     }
 
-    private File createPhotoFile() {
-        String name = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File storageDir = getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        File image = null;
-        try {
-             image = File.createTempFile(name, ".jpg", storageDir);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return image;
-    }
+    private void openCameraView() {
+        cv = new ContentValues();
+        cv.put(MediaStore.Images.Media.TITLE, "Bild");
+        cv.put(MediaStore.Images.Media.DESCRIPTION, "Von Kamera");
+        imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
 
-    private void requestCamera() { if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-            Manifest.permission.CAMERA)) {
-
-        new AlertDialog.Builder(this)
-                .setTitle("Kamera wird benötigt")
-                .setMessage("Die Berechtigung wird unter anderem benötigt, um ein Bild aufzunehmen")
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ActivityCompat.requestPermissions(CameraActivity.this,
-                                new String[] {Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
-                    }
-                })
-                .setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .create().show();
-
-    } else {
-        ActivityCompat.requestPermissions(this,
-                new String[] {Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
-    }
+        Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        camera.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        startActivityForResult(camera, 100);
 
     }
 
@@ -174,7 +144,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private void onClick(){
-        if(ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+        if(ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
         }else {
             requestStorageWrite();
         }
@@ -187,7 +157,7 @@ public class CameraActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        InputStream stream = null;
+        InputStream stream ;
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             try {
                 if (bitmap != null) {
@@ -199,15 +169,53 @@ public class CameraActivity extends AppCompatActivity {
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-
         }
-        if(resultCode == RESULT_OK){
-            if(requestCode == 1){
-                Bitmap bitmap = BitmapFactory.decodeFile(pathToFile);
-                imageView.setImageBitmap(bitmap);
+        if(requestCode == 100 && resultCode == Activity.RESULT_OK){
+            Bitmap thumpnail = null;
+            try {
+                thumpnail = MediaStore.Images.Media.getBitmap(
+                        getContentResolver(), imageUri);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+
+
+                imageView.setImageBitmap(rotateImage(thumpnail, 90));
+
+
+
         }
-
-
     }
+
+    private static Bitmap rotateImageIfRequired(Context context, Bitmap img, Uri selectedImage) throws IOException {
+        InputStream input = context.getContentResolver().openInputStream(selectedImage);
+        ExifInterface ei;
+        if(Build.VERSION.SDK_INT >23)
+            ei = new ExifInterface(input);
+        else
+            ei = new ExifInterface(selectedImage.getPath());
+        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+        switch (orientation){
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                return rotateImage(img, 90);
+
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                return rotateImage(img, 180);
+
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                return rotateImage(img, 270);
+            default:
+                return img;
+        }
+    }
+
+    private static Bitmap rotateImage(Bitmap img, int degree) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+        Bitmap rotatedImg = Bitmap.createBitmap(img, 0,0, img.getWidth(), img.getHeight(), matrix, true);
+        img.recycle();
+        return rotatedImg;
+    }
+
+
 }
