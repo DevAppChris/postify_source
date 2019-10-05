@@ -18,6 +18,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
@@ -28,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -36,6 +38,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -50,13 +53,27 @@ public class CameraActivity extends AppCompatActivity {
     private int STORAGE_PERMISSION_CODE = 3;
     ContentValues cv;
     Uri imageUri;
+    ImageButton image_save;
     FloatingActionButton floatingActionButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
         imageView = findViewById(R.id.image);
+        image_save = findViewById(R.id.imageButton_save);
+        image_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    saveImageToGallery();
+                    Toast.makeText(CameraActivity.this, "Gespeichert", Toast.LENGTH_SHORT).show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         floatingActionButton = findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,6 +85,24 @@ public class CameraActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void saveImageToGallery() throws IOException{
+        BitmapDrawable draw = (BitmapDrawable) imageView.getDrawable();
+        Bitmap bitmap = draw.getBitmap();
+
+        FileOutputStream outStream = null;
+        File sdCard = Environment.getExternalStorageDirectory();
+        File dir = new File(sdCard.getAbsolutePath()+"/Postify/saved_images");
+        dir.mkdirs();
+        String fileName = String.format("%d.jpg", System.currentTimeMillis());
+        File outFile = new File(dir, fileName);
+        outStream = new FileOutputStream(outFile);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+        outStream.flush();
+        outStream.close();
+    }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -104,7 +139,7 @@ public class CameraActivity extends AppCompatActivity {
 
     private void openCameraView() {
         cv = new ContentValues();
-        cv.put(MediaStore.Images.Media.TITLE, "Bild");
+        cv.put(MediaStore.Images.Media.TITLE, "Postify_"+System.currentTimeMillis());
         cv.put(MediaStore.Images.Media.DESCRIPTION, "Von Kamera");
         imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
 
@@ -179,7 +214,7 @@ public class CameraActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-
+            Toast.makeText(this, "Lädt...", Toast.LENGTH_SHORT).show();
                 imageView.setImageBitmap(rotateImage(thumpnail, 90));
 
 
